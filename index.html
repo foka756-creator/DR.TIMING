@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dr.Timing — зеркало движений для тренировки</title>
+<meta name="description" content="Dr.Timing: биологическая обратная связь для спорта. Игрок видит себя и светящийся силуэт эталона тренера и повторяет за ним. Android и iPhone.">
+<meta property="og:title" content="Dr.Timing — зеркало движений">
+<meta property="og:description" content="Зеркало, которое знает идеальное движение и показывает, как к нему прийти.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0D1626">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230D1626'/%3E%3Ccircle cx='32' cy='32' r='17' fill='%23D4F03C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Rubik:wght@300;400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#0D1626; --card:#17233A; --cream:#F3F6EA; --lime:#D4F03C; --cyan:#3DD9FF; --coral:#FF8A7E;
+  --ink:#0D1626; --text-d:#DCE6F2; --mute-d:#8FA3C0; --mute-l:#5B6678;
+  --head:'Oswald',Impact,'Arial Narrow',sans-serif; --body:'Rubik',Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--navy);color:var(--text-d);font-family:var(--body);font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+.grid>*,.show>*,.hero .wrap>*{min-width:0}
+a{color:inherit}
+.wrap{width:min(1180px,100% - 40px);margin:0 auto}
+section{padding:96px 0}
+section.light{background:var(--cream);color:var(--ink)}
+section.lime{background:var(--lime);color:var(--ink)}
+h1,h2,h3{font-family:var(--head);text-transform:uppercase;line-height:1.05;margin:0;font-weight:700}
+h2{font-size:clamp(34px,5.2vw,64px);margin-bottom:28px}
+h3{font-size:clamp(22px,2.4vw,30px);font-weight:600}
+p{margin:0 0 14px}
+.tag{display:inline-block;font-weight:600;font-size:14px;letter-spacing:.18em;text-transform:uppercase;background:var(--lime);color:var(--ink);padding:7px 16px;border-radius:30px;margin-bottom:18px}
+.tag.cyan{background:var(--cyan)} .tag.coral{background:var(--coral)} .tag.dark{background:var(--navy);color:var(--lime)}
+.lead{font-size:clamp(19px,2vw,24px);max-width:820px}
+.mute{color:var(--mute-d)} .light .mute{color:var(--mute-l)}
+.l{color:var(--lime)} .c{color:var(--cyan)} .r{color:var(--coral)}
+.grid{display:grid;gap:22px}
+.g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr} section{padding:68px 0}}
+.card{background:var(--navy);color:var(--text-d);border-radius:24px;padding:28px}
+.dark-sec .card,section:not(.light):not(.lime) .card{background:var(--card)}
+.card h3{margin-bottom:10px}
+.big{font-family:var(--head);font-weight:700;font-size:clamp(48px,6vw,84px);line-height:1}
+.src{font-size:14px;color:var(--mute-d);margin:12px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{border:2px solid var(--cyan);color:var(--cyan);background:var(--card);padding:7px 18px;border-radius:30px;font-weight:600;font-size:16px}
+.chip.l{border-color:var(--lime);color:var(--lime)} .chip.r{border-color:var(--coral);color:var(--coral)}
+.note{font-size:15px;color:var(--mute-d);margin-top:20px} .light .note{color:var(--mute-l)}
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(13,22,38,.92);backdrop-filter:blur(10px);border-bottom:1px solid #22314d}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:var(--head);font-weight:700;font-size:24px;letter-spacing:.04em;color:var(--cream);text-decoration:none}
+.logo b{color:var(--lime)}
+nav ul{list-style:none;display:flex;gap:22px;margin:0;padding:0;font-size:15px;font-weight:500}
+nav a{text-decoration:none;color:var(--text-d)} nav a:hover{color:var(--lime)}
+@media(max-width:860px){nav ul{display:none}}
+/* hero */
+.hero{padding:70px 0 90px;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center}
+@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}.hero figure{max-width:320px;margin:0 auto}}
+.hero h1{font-size:clamp(64px,11vw,150px);color:var(--cream);letter-spacing:.01em}
+.hero .kicker{color:var(--lime);font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:15px;margin-bottom:14px}
+.hero p.lead{color:#B9C7DD;margin-top:20px}
+.btns{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.btn{display:inline-block;text-decoration:none;font-weight:600;padding:14px 28px;border-radius:40px;background:var(--lime);color:var(--ink)}
+.btn.ghost{background:transparent;border:2px solid var(--cyan);color:var(--cyan)}
+.hero figure{margin:0}
+/* timeline */
+.tl{list-style:none;margin:30px 0 0;padding:0;border-left:3px solid var(--ink);display:grid;gap:18px}
+.tl li{position:relative;padding-left:26px}
+.tl li::before{content:"";position:absolute;left:-10px;top:8px;width:17px;height:17px;border-radius:50%;background:var(--lime);border:3px solid var(--ink)}
+.tl .y{font-family:var(--head);font-weight:700;font-size:26px;margin-right:10px}
+/* loop */
+.loop{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:stretch;counter-reset:s}
+@media(max-width:900px){.loop{grid-template-columns:repeat(2,1fr)}} @media(max-width:560px){.loop{grid-template-columns:1fr}}
+.loop .card{position:relative}
+.loop .card::before{counter-increment:s;content:counter(s);font-family:var(--head);font-size:54px;color:#2a3b5c;position:absolute;right:20px;top:8px;font-weight:700}
+/* bars */
+.bars{display:flex;gap:26px;align-items:flex-end;height:190px;margin:18px 0 6px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+.bar .pair{display:flex;align-items:flex-end;gap:6px;width:100%;height:calc(100% - 28px)}
+.bar .pair i{flex:1;border-radius:6px 6px 0 0;background:#44546f}
+.bar .pair i.a{background:var(--c)}
+.bar span{font-size:14px;color:var(--mute-d)}
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:f}
+@media(max-width:1000px){.flow{grid-template-columns:repeat(2,1fr)}} @media(max-width:560px){.flow{grid-template-columns:1fr}}
+.flow .card{background:var(--navy)}
+.flow .n{font-family:var(--head);font-size:44px;font-weight:700;color:var(--lime);line-height:1}
+.flow h3{margin:6px 0 8px;font-size:26px}
+.flow p{font-size:16px;margin:0}
+/* showcase */
+.show{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+@media(max-width:900px){.show{grid-template-columns:1fr}}
+.show img{border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.show ul{padding-left:22px;margin:0} .show li{margin-bottom:10px}
+.phone{max-width:300px;margin:0 auto}
+figcaption{font-size:14px;color:var(--mute-d);margin-top:10px}
+.light figcaption{color:var(--mute-l)}
+.srcs{columns:2;column-gap:44px;font-size:14.5px;color:#2F3A4C;padding-left:18px}
+.srcs li{break-inside:avoid;margin-bottom:10px}
+@media(max-width:800px){.srcs{columns:1}}
+footer{background:#080F1B;color:var(--mute-d);padding:34px 0;font-size:15px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
+.pill{display:inline-block;background:var(--navy);color:var(--lime);font-weight:600;padding:14px 26px;border-radius:40px;margin:6px 10px 0 0}
+.pill.c{color:var(--cyan)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="logo" href="#top">DR.<b>TIMING</b></a>
+  <ul>
+    <li><a href="#idea">Идея</a></li><li><a href="#history">История</a></li><li><a href="#gap">В спорте</a></li>
+    <li><a href="#proof">Доказательства</a></li><li><a href="#product">Продукт</a></li><li><a href="#status">Статус</a></li><li><a href="#pilot">Пилот</a></li>
+  </ul>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="kicker">Проект · биологическая обратная связь</div>
+      <h1>DR.TIMING</h1>
+      <p class="lead">Зеркало, которое знает идеальное движение и показывает, как к нему прийти. Игрок видит себя и светящийся силуэт эталона тренера и повторяет за ним, а приложение подсказывает звуком и голосом.</p>
+      <div class="chips"><span class="chip">Дыхание</span><span class="chip l">Движение</span><span class="chip r">Мозжечок</span></div>
+      <div class="btns"><a class="btn" href="#product">Что это</a><a class="btn ghost" href="#pilot">Пилот на корте</a></div>
+    </div>
+    <figure aria-hidden="true">
+      <svg viewBox="0 0 360 560" role="img" aria-label="Светящийся контур человека">
+        <defs>
+          <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <g stroke="#3DD9FF" stroke-width="46">
+            <circle cx="180" cy="62" r="34" fill="#3DD9FF"/>
+            <path d="M180 120 L180 300"/><path d="M180 140 L88 268"/><path d="M180 140 L272 268"/>
+            <path d="M180 300 L132 508"/><path d="M180 300 L228 508"/>
+          </g>
+        </g>
+        <g stroke="#0D1626" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <circle cx="180" cy="62" r="25" fill="#0D1626"/>
+          <path d="M180 120 L180 300"/><path d="M180 140 L88 268"/><path d="M180 140 L272 268"/>
+          <path d="M180 300 L132 508"/><path d="M180 300 L228 508"/>
+        </g>
+      </svg>
+    </figure>
+  </div>
+</header>
+
+<section class="light" id="idea">
+  <div class="wrap">
+    <span class="tag">Идея</span>
+    <h2>Видеть себя и идеальное движение одновременно</h2>
+    <p class="lead">Игрок стоит перед телефоном. На экране он сам и светящийся силуэт эталона. Совместился, услышал сигнал и повторяет за призраком. Приложение видит, где тело вышло за контур.</p>
+    <div class="grid g3" style="margin-top:34px">
+      <div class="card"><h3 class="l">Эталон тренера</h3><p>Тренер записывает сам, и это может быть любое движение.</p></div>
+      <div class="card"><h3 class="c">Связь сразу</h3><p>Контур, звук и голос работают во время движения, а не после.</p></div>
+      <div class="card"><h3 class="r">Разбор</h3><p>Оценка каждого повтора, динамика и главные ошибки.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="history">
+  <div class="wrap">
+    <span class="tag">История</span>
+    <h2>Откуда взялась биологическая обратная связь</h2>
+    <div class="grid g3" style="margin-bottom:42px">
+      <div class="card"><div class="big l">1924</div><h3>Первая ЭЭГ человека</h3><p>Ганс Бергер записывает электрические ритмы мозга. Работа мозга впервые видна снаружи.</p></div>
+      <div class="card"><div class="big c">1935</div><h3>Обратная афферентация</h3><p>Пётр Анохин: результат действия возвращается в мозг и поправляет следующее. Позже кибернетика назовёт это обратной связью.</p></div>
+      <div class="card"><div class="big r">Бернштейн</div><h3>Сенсорные коррекции</h3><p>Николай Бернштейн: движением управляют сигналы обратной связи, задолго до появления кибернетики.</p></div>
+    </div>
+    <h3 class="l" style="margin-bottom:6px">Лаборатория, 1962–1992</h3>
+  </div>
+</section>
+
+<section class="light" style="padding-top:60px">
+  <div class="wrap">
+    <ul class="tl">
+      <li><span class="y">1962</span>Джо Камия: человек учится узнавать и вызывать альфа-ритм своего мозга.</li>
+      <li><span class="y">1963</span>Джон Басмаджан: люди учатся управлять отдельными двигательными единицами по ЭМГ.</li>
+      <li><span class="y">1964</span>Элмер Грин: тепло в руках по сигналу термометра, и отступает мигрень.</li>
+      <li><span class="y">1967</span>Барри Стерман: кошки учатся усиливать сенсомоторный ритм мозга (SMR).</li>
+      <li><span class="y">1969</span>Нил Миллер в Science: «Обучение висцеральным и железистым реакциям». В октябре в Санта-Монике основано Biofeedback Research Society, явление получает имя.</li>
+      <li><span class="y">1972</span>Стерман и Фрайар: приступы эпилепсии у пациента удаётся подавить обучением SMR.</li>
+      <li><span class="y">1992</span>Пол Лерер и Евгений Ващилло: из их работы вырастает HRV-биоуправление (дыхание около 0,1 Гц).</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="tag cyan">Как это устроено</span>
+    <h2>Замкнутый контур</h2>
+    <div class="loop">
+      <div class="card"><h3 class="l">Измерить</h3><p>Датчик: мозг, пульс, мышца, камера.</p></div>
+      <div class="card"><h3 class="c">Показать</h3><p>Экран или звук, сразу, без задержки.</p></div>
+      <div class="card"><h3 class="r">Осознать</h3><p>Человек видит, насколько он отклонился от цели.</p></div>
+      <div class="card"><h3 class="l">Исправить</h3><p>Мозг подстраивает следующий повтор.</p></div>
+    </div>
+    <p class="lead" style="margin-top:30px;color:var(--lime)">В Dr.Timing датчик — камера телефона, цель — эталон тренера, сигнал — светящийся контур, звук и голос. Цикл замыкается на каждом повторе.</p>
+    <div class="grid g4" style="margin-top:36px">
+      <div class="card"><h3 class="l">Мигрень</h3><p>Термообратная связь Грина: научиться согревать руки.</p></div>
+      <div class="card"><h3 class="c">Эпилепсия</h3><p>Тренинг SMR-ритма Стермана снижал приступы.</p></div>
+      <div class="card"><h3 class="r">Мышцы</h3><p>ЭМГ-обратная связь по Басмаджану: основа тренинга нервно-мышечного контроля.</p></div>
+      <div class="card"><h3 class="l">Стресс и сердце</h3><p>HRV-биоуправление: дыхание в резонансном ритме сердца.</p></div>
+    </div>
+    <p class="note">Почти вся история БОС — это медицина и психофизиология. Тренировочное поле осталось на обочине.</p>
+  </div>
+</section>
+
+<section class="light" id="gap">
+  <div class="wrap">
+    <span class="tag coral">Белое пятно</span>
+    <h2>В спорте БОС почти не используется</h2>
+    <p class="lead">Технология выросла в лаборатории и клинике. До тренировочного поля она не дошла: ни как массовая практика, ни как привычный инструмент тренера.</p>
+    <div class="grid g3" style="margin-top:34px">
+      <div class="card"><div class="big l">7</div><p>исследований HRV-биоуправления в спорте нашёл обзор 2017 года; выборки от 1 до 30 человек.</p></div>
+      <div class="card"><div class="big c">10</div><p>исследований нейрофидбэка у спортсменов разобрал обзор 2023 года.</p></div>
+      <div class="card"><div class="big r">3</div><p>барьера по оценке специалистов: цена, нехватка времени, мало обученных кадров.</p></div>
+    </div>
+    <p class="note">Вывод сделан по научным обзорам; опрос тренеров мы не проводили. Мы не утверждаем, что БОС в спорте не использует никто: есть работа с дыханием и ритмом сердца, нейрофидбэк у отдельных спортсменов, но это штучная практика.</p>
+    <div class="grid g2" style="margin-top:34px">
+      <div class="card"><h3 class="l">Что есть</h3><ul><li>Дыхание, ритм сердца (HRV) и ЭЭГ-тренинги для психологической подготовки отдельных спортсменов и команд.</li><li>Быстрые системы обратной связи для гребли, настольного тенниса и биатлона: специальная аппаратура для элиты (Baca, Kornfeind, 2006).</li></ul></div>
+      <div class="card"><h3 class="r">Чего мы не нашли</h3><ul><li>Простой обратной связи по самой технике движения: на смартфоне, без датчиков на теле и без лаборатории.</li><li>Эталона тренера в виде «призрака», в который игрок встраивается.</li><li>Инструмента, доступного любому клубу и школе.</li></ul></div>
+    </div>
+    <p class="note">«Не нашли» — по результатам нашего обзора литературы, не по полному исследованию рынка.</p>
+  </div>
+</section>
+
+<section id="proof">
+  <div class="wrap">
+    <span class="tag">Доказательства</span>
+    <h2>Почему это работает</h2>
+    <div class="grid g3">
+      <div class="card"><h3 class="l">Мозжечок</h3><p>Хранит «внутренние модели» движения: предсказывает результат и сверяет его с реальностью.</p><p class="src">Wolpert, Miall, Kawato, 1998</p></div>
+      <div class="card"><h3 class="c">Обратная связь</h3><p>Дополнительная информация о выполнении, от тренера или от техники, повышает эффективность обучения движениям.</p><p class="src">Sigrist et al., 2013 (обзор)</p></div>
+      <div class="card"><h3 class="r">Зрение и слух</h3><p>Звук и тактильный сигнал сверх зрительных подсказок улучшают обучение сложному движению.</p><p class="src">Sigrist et al., 2014</p></div>
+    </div>
+    <p class="lead" style="margin-top:28px;color:var(--lime)">Dr.Timing использует оба канала: контур эталона для глаз, сигнал и голос для слуха.</p>
+
+    <h3 class="c" style="margin:56px 0 18px">Примеры из спорта</h3>
+    <div class="grid g2">
+      <div class="card">
+        <span class="tag dark" style="background:var(--lime);color:var(--ink)">Пример 1 · стрельба из лука</span>
+        <h3>Верный сигнал поднимает результат, неверный снижает</h3>
+        <p><b class="l">24</b> лучника уровня pre-elite, 16 мужчин и 8 женщин. Три группы: верная обратная связь, неверная, без неё. До и после: по 27 выстрелов, ЭЭГ с височных отведений.</p>
+        <div class="bars" style="--c:var(--lime)" aria-label="Схема: верная связь растёт, неверная падает, контроль без изменений">
+          <div class="bar" style="--c:var(--lime)"><div class="pair"><i style="height:50%"></i><i class="a" style="height:75%"></i></div><span>Верная</span></div>
+          <div class="bar" style="--c:var(--coral)"><div class="pair"><i style="height:50%"></i><i class="a" style="height:28%"></i></div><span>Неверная</span></div>
+          <div class="bar" style="--c:var(--cyan)"><div class="pair"><i style="height:50%"></i><i class="a" style="height:50%"></i></div><span>Контроль</span></div>
+        </div>
+        <p class="src">Серый столбец — до, цветной — после. Схема направления изменений, не масштаб. Landers et al., Med Sci Sports Exerc, 1991, 23(1): 123–129. Сигнал может не только помочь, но и навредить, поэтому эталон должен быть корректным.</p>
+      </div>
+      <div class="card">
+        <span class="tag cyan">Пример 4 · академическая гребля</span>
+        <h3>Звук лодки ускоряет лодку</h3>
+        <p><b class="c">20</b> гребцов национальной сборной Германии: 14 взрослых и 6 юниоров, 8 лодок. Ускорение лодки в реальном времени превращалось в звук; цель — убрать провалы ускорения внутри гребка.</p>
+        <div class="big c" style="margin:10px 0">p&lt;0,01</div>
+        <p>рост средней скорости лодки со звуковой связью в обеих группах и при проверке сохранения эффекта. Тот же принцип, что у нас: движение сразу превращается в сигнал, пока его ещё можно поправить.</p>
+        <p class="src">Schaffert, Mattes, J Hum Sport Exerc, 2014, 9(2)</p>
+      </div>
+      <div class="card">
+        <span class="tag coral">Пример 2 · гольф</span>
+        <h3>Точность паттов выше</h3>
+        <p><b class="r">16</b> гольфистов уровня pre-elite; 8 занятий нейрофидбэка по сенсомоторному ритму против контроля. Точность паттов выше, чем в контроле.</p>
+        <p class="src">Cheng et al., J Sport Exerc Psychol, 2015, 37(6): 626–636</p>
+      </div>
+      <div class="card">
+        <span class="tag">Пример 3 · баскетбол</span>
+        <h3>Тренинг дыхания и сердечного ритма</h3>
+        <p><b class="l">30</b> баскетболистов университетского уровня и выше; три группы (HRV-биоуправление, плацебо, контроль); 10 дней по 20 минут, дыхание в резонансном ритме. Тревожность, ведение мяча, передачи, броски: различия между группами значимы, наблюдение через месяц.</p>
+        <p class="src">Paul, Garg, Appl Psychophysiol Biofeedback, 2012</p>
+      </div>
+    </div>
+
+    <h3 class="c" style="margin:56px 0 18px">Обзоры и пилот с элитой</h3>
+    <div class="grid g3">
+      <div class="card"><div class="big l">6 из 7</div><p>исследований HRV-биоуправления у спортсменов улучшили показатели, а с ними результат (85,7%); выборки 1–30 человек.</p><p class="src">Jiménez Morgan, Molina Mora, 2017</p></div>
+      <div class="card"><div class="big c">10 → 24</div><p>обзор 2023 (10 исследований): ниже стресс, лучше самоконтроль и реакция; обзор 2024 (24 исследования): эффект подтверждается в разных видах спорта.</p><p class="src">Brain Sciences, 2023 и 2024</p></div>
+      <div class="card"><div class="big r">21</div><p>элитный спортсмен: 11 футболистов высшей лиги Нидерландов (выше самооценка концентрации и эмоциональной устойчивости) и 10 спринтеров (лучше восстановление). Пилот без контроля.</p><p class="src">Rijken et al., 2016</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="light">
+  <div class="wrap">
+    <span class="tag coral">Честно</span>
+    <h2>Доказательства обнадёживают, но не окончательны</h2>
+    <div class="grid g2">
+      <div class="card"><h3 class="r">Ограничения</h3><ul><li>Выборки малы: от одного до нескольких десятков человек.</li><li>Чаще pre-elite и студенческие группы, чем сборные.</li><li>Часть работ — пилоты без контрольной группы.</li><li>Это БОС дыхания, ритма сердца и мозга, а не БОС по технике движения.</li></ul></div>
+      <div class="card"><h3 class="l">Что это значит для нас</h3><ul><li>Принцип «увидел ошибку и сразу поправил» работает у лучников, гребцов и игроков.</li><li>Наш вклад: применить его к технике движения, доступно, на обычном смартфоне.</li><li><b>Собственную эффективность мы ещё не измеряли.</b> Следующий шаг: <a href="#pilot" style="color:var(--cyan)">пилот</a>.</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="product">
+  <div class="wrap">
+    <span class="tag">Продукт</span>
+    <h2>Dr.Timing: два модуля</h2>
+    <div class="grid g2">
+      <div class="card" style="border:2px solid var(--cyan)"><span class="tag cyan">Модуль 1</span><h3>Дыхание</h3><p>Дыхание и крик в микрофон управляют движением теннисного мяча на поле. Дыхание — важная часть хорошей игры, и его можно тренировать с обратной связью.</p></div>
+      <div class="card" style="border:2px solid var(--lime)"><span class="tag">Модуль 2 · зеркало движений</span><h3>Зеркало движений</h3><p>Камера на штативе, эталон тренера, светящийся контур-призрак, сигнал и голос, разбор после тренировки. Работает для любого движения, не только теннисного.</p></div>
+    </div>
+    <div class="chips"><span class="chip">Android</span><span class="chip l">iPhone</span><span class="chip r">Тренировка мозжечка и привычки движения</span></div>
+  </div>
+</section>
+
+<section class="light">
+  <div class="wrap">
+    <span class="tag">Модуль 2 · зеркало движений</span>
+    <h2>Как проходит тренировка</h2>
+    <div class="flow">
+      <div class="card"><div class="n">1</div><h3>Эталон</h3><p>Тренер записывает 5–8 повторов любого движения.</p></div>
+      <div class="card"><div class="n">2</div><h3>Калибровка</h3><p>Игрок встаёт перед телефоном на штативе, около секунды.</p></div>
+      <div class="card"><div class="n">3</div><h3>Совмещение</h3><p>Встаёт в контур; подсказки: «влево», «ближе», «согни колени».</p></div>
+      <div class="card"><div class="n">4</div><h3>Повтор</h3><p>Сигнал, и через 0,2 с контур сам проигрывает движение тренера.</p></div>
+      <div class="card"><div class="n">5</div><h3>Разбор</h3><p>Оценка повторов, динамика, главные ошибки.</p></div>
+    </div>
+    <p class="lead" style="margin-top:26px">Игрок видит себя и эталон одновременно: ошибка заметна сразу, а не после просмотра видео.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="show">
+      <figure style="margin:0"><img src="img/ios_silhouette.jpg" width="1656" height="1200" loading="lazy" alt="Три позы силуэта в симуляторе iPhone"><figcaption>Три позы силуэта в симуляторе iPhone; условный фон вместо камеры.</figcaption></figure>
+      <div>
+        <span class="tag cyan">Призрак-силуэт</span>
+        <h2>Вы <span class="l">внутри</span> контура</h2>
+        <ul>
+          <li>Светящийся контур человека, как «кожа» эталона.</li>
+          <li>Вне контура камера затемнена: часть тела, вышедшая за форму, видна сразу.</li>
+          <li>За 0,2 с до начала повтора звучит сигнал, и контур начинает двигаться.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="light">
+  <div class="wrap">
+    <span class="tag">Любое движение</span>
+    <h2>Любое упражнение становится эталоном</h2>
+    <p class="lead">Тренер записывает 5–8 повторов. Приложение само находит начало и конец каждого и проигрывает самый типичный в реальном темпе: приседание, подъём ноги и руки, теннисный замах.</p>
+    <div class="grid g2" style="margin-top:30px">
+      <figure style="margin:0"><img src="img/silhouette_squat.png" width="1260" height="330" loading="lazy" alt="Кадры силуэта: приседание" style="background:var(--navy);border-radius:20px"><figcaption>Приседание</figcaption></figure>
+      <figure style="margin:0"><img src="img/silhouette_legarm.png" width="1260" height="330" loading="lazy" alt="Кадры силуэта: подъём ноги и руки" style="background:var(--navy);border-radius:20px"><figcaption>Подъём ноги и руки</figcaption></figure>
+    </div>
+    <p class="note">Схема кадров призрака по записанным синтетическим повторам, не запись реальных людей.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="show" style="grid-template-columns:.9fr 1.1fr">
+      <figure class="phone" style="margin:0"><img src="img/ios_main.png" width="460" height="1000" loading="lazy" alt="Главный экран приложения на iPhone" style="border-radius:32px"><figcaption>Главный экран приложения на iPhone (симулятор). В текущей сборке приложение ещё называется «Кибертеннис».</figcaption></figure>
+      <div>
+        <span class="tag coral">Обратная связь</span>
+        <h2>Видит, слышит, разбирает</h2>
+        <div class="grid" style="gap:16px">
+          <div class="card"><h3 class="l">Видит</h3><p>Контур-призрак, затемнение вне контура, процент совмещения; контур зеленеет, когда поза совпала.</p></div>
+          <div class="card"><h3 class="c">Слышит</h3><p>Сигнал за 0,2 с до повтора, сигнал ошибки, голосовые подсказки: «Таз ниже», «Согни локоть», «Ногу выше».</p></div>
+          <div class="card"><h3 class="r">Разбирает</h3><p>Оценка каждого повтора, динамика к концу тренировки, главные ошибки с объяснением, график по повторам.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="light">
+  <div class="wrap">
+    <span class="tag">Технология</span>
+    <h2>Только смартфон</h2>
+    <div class="grid g3">
+      <div class="card"><h3 class="l">Поза по камере</h3><p>ML Kit на Android, Apple Vision на iPhone.</p></div>
+      <div class="card"><h3 class="c">Сравнение</h3><p>Углы суставов, высота таза, подъём стоп; разный темп не мешает.</p></div>
+      <div class="card"><h3 class="r">Приватность</h3><p>Всё считается на телефоне; видео не сохраняется и не отправляется.</p></div>
+      <div class="card"><h3 class="l">Файл эталона</h3><p>Эталон можно передать другому тренеру, в том числе между Android и iPhone.</p></div>
+      <div class="card"><h3 class="c">Платформы</h3><p>Android 7 и новее, iPhone с iOS 16 и новее.</p></div>
+      <div class="card"><h3 class="r">Проверка кода</h3><p>72 автотеста (Android) и 47 (iPhone); несколько циклов проверки отдельным ИИ-ревьюером.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <span class="tag coral">Статус без прикрас</span>
+    <h2>Где мы сейчас</h2>
+    <div class="grid g2">
+      <div class="card"><h3 class="l">Сделано</h3><ul><li>Приложения для Android и iPhone.</li><li>Запись любого движения тренером.</li><li>Призрак-силуэт, совмещение, сигнал за 0,2 с.</li><li>Разбор тренировки и история.</li><li>Автотесты и независимая проверка кода.</li></ul></div>
+      <div class="card"><h3 class="c">Дальше</h3><ul><li>Проверка на живых людях: тренер и игроки.</li><li>Настройка порогов по первым записям.</li><li>Библиотека эталонов, в том числе профессионалов.</li><li>Связка с модулем 1 (дыхание).</li><li>Другие виды спорта.</li></ul></div>
+    </div>
+    <p class="note" style="color:var(--coral);font-size:17px">На живых людях приложение пока не проверено: результаты получены на модельных данных и в симуляторах.</p>
+  </div>
+</section>
+
+<section class="light" id="pilot">
+  <div class="wrap">
+    <span class="tag coral">План, а не результат</span>
+    <h2>Пилот: проверить на корте</h2>
+    <div class="grid g2">
+      <div class="card"><h3 class="l">Кто</h3><p>20–30 игроков клубного уровня и их тренеры.</p></div>
+      <div class="card"><h3 class="c">Как</h3><p>Две группы: тренировка с призраком и обычная; 6–8 недель.</p></div>
+      <div class="card"><h3 class="r">Что меряем</h3><p>Ошибки техники по разбору, оценка тренера по видео вслепую, стабильность движения.</p></div>
+      <div class="card"><h3 class="l">Итог</h3><p>Первое собственное доказательство и поправки в приложении.</p></div>
+    </div>
+    <p class="note">Для строгого вывода позже понадобится больше людей: авторы пилота с элитой оценили около 42 участников на группу. Размеры и сроки — предложение, не договорённость.</p>
+  </div>
+</section>
+
+<section class="lime">
+  <div class="wrap">
+    <span class="tag dark">Следующий шаг</span>
+    <h2 style="font-size:clamp(40px,7vw,96px)">Теннис — первый шаг</h2>
+    <p class="lead" style="color:#1B2A12">Телефон, камера и эталон тренера превращают любую тренировку в упражнение с обратной связью. БОС, которая десятилетиями жила в клиниках и лабораториях, выходит на корт.</p>
+    <p><span class="pill">Нужен клуб для пилота</span><span class="pill c">Нужен тренер-партнёр</span></p>
+  </div>
+</section>
+
+<section class="light" id="sources">
+  <div class="wrap">
+    <h2 style="font-size:clamp(30px,4vw,48px)">Источники</h2>
+    <ol class="srcs">
+      <li>Basmajian J.V. (1963). Conscious control of individual motor units. Science 141:440–441</li>
+      <li>Miller N.E. (1969). Learning of visceral and glandular responses. Science</li>
+      <li>Sterman M.B., Friar L. (1972). Suppression of seizures in an epileptic following sensorimotor EEG feedback training</li>
+      <li>Neal Miller: The Birth of Biofeedback; The Origins of Biofeedback (nealmiller.org)</li>
+      <li>Анохин П.К. — обратная афферентация (1935); Бернштейн Н.А. — сенсорные коррекции</li>
+      <li>Lehrer P., Vaschillo E. — HRV-биоуправление на резонансной частоте</li>
+      <li>Wolpert D.M., Miall R.C., Kawato M. (1998). Internal models in the cerebellum. Trends Cogn Sci 2(9):338–347</li>
+      <li>Sigrist R. et al. (2013). Augmented visual, auditory, haptic, and multimodal feedback in motor learning: a review. Psychon Bull Rev</li>
+      <li>Sigrist R. et al. (2014). Sonification and haptic feedback in addition to visual feedback enhances complex motor task learning. Exp Brain Res</li>
+      <li>Landers D.M. et al. (1991). Med Sci Sports Exerc 23(1):123–129</li>
+      <li>Cheng M.-Y. et al. (2015). J Sport Exerc Psychol 37(6):626–636</li>
+      <li>Paul M., Garg K. (2012). Appl Psychophysiol Biofeedback (PubMed 22402913)</li>
+      <li>Schaffert N., Mattes K. (2014). J Hum Sport Exerc 9(2)</li>
+      <li>Rijken N.H. et al. (2016). Appl Psychophysiol Biofeedback (PMC5122600)</li>
+      <li>Jiménez Morgan S., Molina Mora J.A. (2017). HRV biofeedback and sport performance: a systematic review. Appl Psychophysiol Biofeedback</li>
+      <li>Neurofeedback in sports: Brain Sci 2023 (PMID 37190625); Brain Sci 2024 (PMC11506327)</li>
+      <li>Baca A., Kornfeind P. (2006). Rapid feedback systems for elite sports training. IEEE Pervasive Comput 5(4):70–76</li>
+    </ol>
+    <p class="note">Цифры и выводы пересказаны по аннотациям публикаций; полные тексты стоит сверить перед публикацией.</p>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Dr.Timing · БОС для спорта</span><span>Проект на стадии прототипа. Эффективность приложения ещё не проверена на людях.</span></div></footer>
+
+</body>
+</html>
