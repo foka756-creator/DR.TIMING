@@ -59,6 +59,21 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 nav ul{list-style:none;display:flex;gap:22px;margin:0;padding:0;font-size:15px;font-weight:500}
 nav a{text-decoration:none;color:var(--text-d)} nav a:hover{color:var(--lime)}
 @media(max-width:860px){nav ul{display:none}}
+/* ticker */
+.ticker{display:flex;align-items:stretch;background:var(--lime);color:var(--ink);font-size:15px;font-weight:500;overflow:hidden}
+.ticker[hidden]{display:none}
+.ticker-label{flex:none;display:flex;align-items:center;background:var(--ink);color:var(--lime);font-family:var(--head);text-transform:uppercase;letter-spacing:.08em;font-size:15px;font-weight:600;padding:0 16px;white-space:nowrap}
+.ticker-view{flex:1;min-width:0;overflow:hidden;position:relative}
+.ticker-track{display:inline-flex;white-space:nowrap;padding:9px 0;will-change:transform;animation:tick var(--dur,120s) linear infinite}
+.ticker:hover .ticker-track,.ticker:focus-within .ticker-track{animation-play-state:paused}
+.ticker-track a{text-decoration:none;color:inherit;padding-right:34px;position:relative}
+.ticker-track a::after{content:"\25CF";position:absolute;right:12px;font-size:9px;top:50%;transform:translateY(-50%);opacity:.55}
+.ticker-track a:hover{text-decoration:underline}
+.ticker-track .t-src{font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:rgba(13,22,38,.12);border-radius:10px;padding:2px 8px;margin:0 8px 0 0;color:var(--ink)}
+.ticker-upd{flex:none;display:flex;align-items:center;padding:0 14px;font-size:12px;color:#33401a;white-space:nowrap}
+@keyframes tick{to{transform:translateX(-50%)}}
+@media(max-width:640px){.ticker-upd{display:none}.ticker-label{padding:0 10px}}
+@media(prefers-reduced-motion:reduce){.ticker-view{overflow-x:auto}.ticker-track{animation:none}}
 /* hero */
 .hero{padding:70px 0 90px;overflow:hidden}
 .hero .wrap{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center}
@@ -121,6 +136,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
     <li><a href="#proof">Доказательства</a></li><li><a href="#product">Продукт</a></li><li><a href="#status">Статус</a></li><li><a href="#pilot">Пилот</a></li>
   </ul>
 </div></nav>
+
+<div class="ticker" id="ticker" role="region" aria-label="Новости тенниса" hidden>
+  <div class="ticker-label">Теннис</div>
+  <div class="ticker-view"><div class="ticker-track" id="tickerTrack"></div></div>
+  <div class="ticker-upd" id="tickerUpd"></div>
+</div>
 
 <header class="hero" id="top">
   <div class="wrap">
@@ -451,5 +472,37 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
 
 <footer><div class="wrap"><span>Dr.Timing · БОС для спорта</span><span>Проект на стадии прототипа. Эффективность приложения ещё не проверена на людях.</span></div></footer>
 
+<script>
+(function(){
+  var URLS=["https://raw.githubusercontent.com/foka756-creator/DR.TIMING/news-data/news.json","news.json"];
+  var box=document.getElementById("ticker"),track=document.getElementById("tickerTrack"),upd=document.getElementById("tickerUpd");
+  function load(i){
+    if(i>=URLS.length) return Promise.reject(new Error("no news"));
+    return fetch(URLS[i]+"?h="+Math.floor(Date.now()/36e5),{cache:"no-cache"})
+      .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
+      .then(function(d){if(!d||!d.items||!d.items.length)throw new Error("empty");return d;})
+      .catch(function(){return load(i+1);});
+  }
+  function safe(u){return /^https?:\/\//i.test(u)?u:null;}
+  function render(d){
+    var frag=document.createDocumentFragment(),chars=0;
+    d.items.forEach(function(n){
+      var href=safe(n.link);if(!href||!n.title)return;
+      var a=document.createElement("a");a.href=href;a.target="_blank";a.rel="noopener noreferrer";
+      var s=document.createElement("span");s.className="t-src";s.textContent=n.source||"";
+      a.appendChild(s);a.appendChild(document.createTextNode(n.title));frag.appendChild(a);chars+=(n.title+(n.source||"")).length+6;
+    });
+    if(!frag.childNodes.length)return;
+    track.appendChild(frag.cloneNode(true));
+    var copy=frag.cloneNode(true);
+    Array.prototype.forEach.call(copy.childNodes,function(a){a.setAttribute("aria-hidden","true");a.tabIndex=-1;});
+    track.appendChild(copy);
+    track.style.setProperty("--dur",Math.max(60,Math.round(chars*0.14))+"s");
+    if(d.updated){var t=new Date(d.updated);if(!isNaN(t))upd.textContent="обновлено "+t.toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});}
+    box.hidden=false;
+  }
+  load(0).then(render).catch(function(){});
+})();
+</script>
 </body>
 </html>
