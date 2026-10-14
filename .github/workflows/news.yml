@@ -2,7 +2,7 @@ name: Обновление новостей тенниса
 
 on:
   schedule:
-    - cron: "11 * * * *"   # каждый час, на 11-й минуте
+    - cron: "2-57/5 * * * *"   # каждые 5 минут (минимум у GitHub Actions), со сдвигом от круглых отметок
   workflow_dispatch:
 
 permissions:

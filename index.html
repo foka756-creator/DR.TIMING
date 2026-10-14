@@ -478,13 +478,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
   var box=document.getElementById("ticker"),track=document.getElementById("tickerTrack"),upd=document.getElementById("tickerUpd");
   function load(i){
     if(i>=URLS.length) return Promise.reject(new Error("no news"));
-    return fetch(URLS[i]+"?h="+Math.floor(Date.now()/36e5),{cache:"no-cache"})
+    return fetch(URLS[i]+"?m="+Math.floor(Date.now()/6e4),{cache:"no-cache"})
       .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
       .then(function(d){if(!d||!d.items||!d.items.length)throw new Error("empty");return d;})
       .catch(function(){return load(i+1);});
   }
   function safe(u){return /^https?:\/\//i.test(u)?u:null;}
+  var shown=null;
   function render(d){
+    if(d.updated&&d.updated===shown)return;
     var frag=document.createDocumentFragment(),chars=0;
     d.items.forEach(function(n){
       var href=safe(n.link);if(!href||!n.title)return;
@@ -493,15 +495,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
       a.appendChild(s);a.appendChild(document.createTextNode(n.title));frag.appendChild(a);chars+=(n.title+(n.source||"")).length+6;
     });
     if(!frag.childNodes.length)return;
+    track.textContent="";
     track.appendChild(frag.cloneNode(true));
     var copy=frag.cloneNode(true);
     Array.prototype.forEach.call(copy.childNodes,function(a){a.setAttribute("aria-hidden","true");a.tabIndex=-1;});
     track.appendChild(copy);
     track.style.setProperty("--dur",Math.max(60,Math.round(chars*0.14))+"s");
+    shown=d.updated||String(Date.now());
     if(d.updated){var t=new Date(d.updated);if(!isNaN(t))upd.textContent="обновлено "+t.toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});}
     box.hidden=false;
   }
-  load(0).then(render).catch(function(){});
+  function tick(){load(0).then(render).catch(function(){});}
+  tick();
+  setInterval(function(){if(!document.hidden)tick();},60000);
 })();
 </script>
 </body>
